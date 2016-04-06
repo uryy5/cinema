@@ -1,0 +1,19 @@
+<html>
+  <head>
+  <title>{{ user }} Cinema</title>
+  </head>
+<body>
+  <h1>Entrades rebudes per {{ user }}</h1>
+  {% if sobres %}
+  <ul>
+  {% for sobre in sobres %}
+  <li>
+  {{sobre.donor.name}} - {{ sobre.concept}} - {{ sobre.amount }}€
+  </li>
+  {% endfor %}
+  </ul>
+  {% else %}
+  <p>No ha rebut sobres.</p>
+  {% endif %}
+</body>
+</html>

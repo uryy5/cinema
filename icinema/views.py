@@ -3,11 +3,19 @@ from django.shortcuts import render
 from django.utils import timezone
 from django.core import serializers
 from django.core.urlresolvers import reverse
-from django.http import HttpResponseRedirect, HttpResponse
+from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.views.generic import DetailView, ListView
 from django.views.generic.base import TemplateResponseMixin
 from django.views.generic.edit import CreateView
+
+from django.shortcuts import render
+
+from django.http import HttpResponse, Http404
+from django.template import Context
+from django.template.loader import get_template
+from django.contrib.auth.models import User
+from django.utils import simplejson
 
 from models import Cinema,Films,Performances, CinemaReview
 from forms import Cinema
@@ -38,17 +46,46 @@ class ConnegResponseMixin(TemplateResponseMixin):
 
 
 def mainpage(request):
-    output = '''
-        <html>
-        <head><title>%s</title></head>
-        <body>
-        <h1>%s</h1><p>%s</p>
-        </body>
-        </html>
-        ''' % ( 'Cinema aPP',
-        'Welcome to the Cinema aPPlication',
-        'Cinema app ')
+    template = get_template('mainpage.html')
+    variables = Context({
+        'titlehead': 'Cinema aPP',
+        'pagetitle': 'Welcome to the Cinema aPPlication',
+        'contentbody': 'Managing non legal funding since 2013'
+        })
+    output = template.render(variables)
     return HttpResponse(output)
+
+def userpage(request, username):
+    try:
+        user = User.objects.get(user=username)
+    except:
+        raise Http404('User not found.')
+
+    cinema = user.sobre_set.all()
+    template = get_template('userpage.html')
+    variables = Context({
+        'user': user,
+        'cinema': cinema
+        })
+    output = template.render(variables)
+    return HttpResponse(output)
+
+def cinemajson(request):
+    user = request.user
+    if not user:
+        raise Http404('User not found.')
+    cinema = user.sobre_set.all()
+    cinemajson = []
+    for s in cinema:
+        sobre = dict()
+        sobre["date"]=s.date.ctime()
+        sobre["donor"]=s.user.name
+        sobre["user"]=s.user.user
+        cinemajson.append(sobre)
+
+
+    return HttpResponse(simplejson.dumps(cinemajson),mimetype='application/json')
+
 
 class CinemaList(ListView, ConnegResponseMixin):
     model = Cinema

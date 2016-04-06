@@ -1,0 +1,12 @@
+{% extends "basepage.html" %}
+{% block content %}
+{% if user.username %}
+<p>Welcome {{ user.username }}!
+To bribes and envelopes management !
+You know what to do</p>
+{% else %}
+<p>Welcome anonymous:
+Must  <a href="/login/">sign in</a>
+to manage bribes.</p>
+{% endif %}
+{% endblock %}

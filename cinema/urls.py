@@ -25,8 +25,9 @@ urlpatterns = patterns('',
     # url(r'^$', 'sobres.views.home', name='home'),
     # url(r'^blog/', include('blog.urls')),
 
-
+    url(r'^user/(\w+)/$', userpage),
     url(r'^$', mainpage, name='home'),
     url(r'^login/$', 'django.contrib.auth.views.login'),
+    url(r'^api/cinema.json/$', cinemajson),
     url(r'^admin/', include(admin.site.urls)),
 )
