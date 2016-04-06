@@ -4,7 +4,7 @@
     Cinemas
 </h1>
 <ul>
-    {% for cinema in latest_cinema_list %}
+    {% for cinema in cinema_list %}
         <li><a href="{% url 'icinema:cinema_detail' cinema.id 'html' %}">
             {{ cinema.name }}</a></li>
     {% empty %}<li>Sorry, no cinemes registered yet.</li>
