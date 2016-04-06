@@ -15,9 +15,9 @@ from django.http import HttpResponse, Http404
 from django.template import Context
 from django.template.loader import get_template
 from django.contrib.auth.models import User
-from django.utils import simplejson
+#from django.utils import simplejson
 
-from models import Cinema,Films,Performances, CinemaReview
+from models import Cinema,Films,Performances
 from forms import Cinema
 # Create your views here.
 
@@ -84,29 +84,18 @@ def cinemajson(request):
         cinemajson.append(sobre)
 
 
-    return HttpResponse(simplejson.dumps(cinemajson),mimetype='application/json')
+    #return HttpResponse(simplejson.dumps(cinemajson),mimetype='application/json')
 
 
 class CinemaList(ListView, ConnegResponseMixin):
     model = Cinema
-    queryset = Cinema.objects.filter(date__lte=timezone.now()).order_by('date')[:5]
-    context_object_name = 'latest_cinema_list'
+    queryset = Cinema.objects.all()
+    context_object_name = 'cinema_list'
     template_name = 'icinema/cinema_list.html'
 
 class CinemaDetail(DetailView, ConnegResponseMixin):
     model = Cinema
     template_name = 'icinema/cinema_detail.html'
 
-    def get_context_data(self, **kwargs):
-        context = super(CinemaDetail, self).get_context_data(**kwargs)
-        return context
 
-def review(request, pk):
-    cinema = get_object_or_404(Cinema, pk=pk)
-    review = CinemaReview(
-        rating=request.POST['rating'],
-        comment=request.POST['comment'],
-        user=request.user,
-        cinema=cinema)
-    review.save()
-    return HttpResponseRedirect(reverse('icinema:cinema_detail', args=(cinema.id,)))
+

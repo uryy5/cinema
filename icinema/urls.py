@@ -9,9 +9,16 @@ from views import CinemaDetail, CinemaList
 
 urlpatterns = patterns('',
     # Home page
-    url(r'^user/(\w+)/$', userpage),
-    url(r'^$', mainpage, name='home'),
-    url(r'^admin/', include(admin.site.urls)),
-    url(r'^icinema/ ', include('icinema.urls', namespace='icinema'))
+    url(r'^$',
+        RedirectView.as_view(url=reverse_lazy('icinema:cinema_list', kwargs={'extension': 'html'})),
+        name='home_page'),
 
+    # List cinemes: /icinema/cinemes.json or html or xml
+    url(r'^cinemes\.(?P<extension>(json|xml|html))$',
+        CinemaList.as_view(),
+        name='cinema_list'),
+
+    url(r'^cinemes/(?P<pk>\d+)\.(?P<extension>(json|xml|html))$',
+        CinemaDetail.as_view(),
+        name='cinema_detail'),
 )
