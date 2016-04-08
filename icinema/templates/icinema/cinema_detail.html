@@ -1,7 +1,25 @@
 {% extends "icinema/base.html" %}
+
 {% block content %}
 <h1>
     {{ cinema.name }}
+</h1>
+<h2>Address:</h2>
+<p>
+    {{ cinema.adress }}, {{ cinema.city }} <br/>
+    {{ cinema.postcode }} {{ cinema.cinema_url }} <br/>
+    {{ cinema.telephone }} ({{ cinema.stateOrProvince }})
+</p>
 
+<h2>
+    Pelicules Estreno:
+</h2>
+<ul>
+    {% for films in cinema.films.all %}
+        <li><a href="{% url 'icinema:films_detail' cinema.id films.id 'html' %}">
+            {{ films.tittle }}</a></li>
+    {% empty %}<li>Sorry, no films for this cinema yet.</li>
+    {% endfor %}
+</ul>
 
 {% endblock %}
