@@ -29,6 +29,6 @@ urlpatterns = patterns('',
     url(r'^$', mainpage, name='home'),
     url(r'^login/$', 'django.contrib.auth.views.login'),
     url(r'^icinema/', include('icinema.urls', namespace='icinema')),
-    # url(r'^api/cinema.json/$', cinemajson),
+    url(r'^logout/$', 'django.contrib.auth.views.logout', name='logout', kwargs={'next_page': '/'}),
     url(r'^admin/', include(admin.site.urls)),
 )
