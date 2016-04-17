@@ -1,5 +1,4 @@
 from django.shortcuts import render
-
 from django.utils import timezone
 from django.core import serializers
 from django.core.urlresolvers import reverse
@@ -8,7 +7,6 @@ from django.shortcuts import get_object_or_404
 from django.views.generic import DetailView, ListView
 from django.views.generic.base import TemplateResponseMixin
 from django.views.generic.edit import CreateView
-
 from django.shortcuts import render
 
 from django.http import HttpResponse, Http404
@@ -17,7 +15,7 @@ from django.template.loader import get_template
 from django.contrib.auth.models import User
 #from django.utils import simplejson
 
-from models import Cinema,Films,Performances
+from models import Cinema,Films,Performances,FilmsPerfomances
 from forms import Cinema
 # Create your views here.
 
@@ -50,14 +48,15 @@ def mainpage(request):
     variables = Context({
         'titlehead': 'Cinema aPP',
         'pagetitle': 'Welcome to the Cinema aPPlication',
-        'contentbody': 'Managing non legal funding since 2013'
+        'contentbody': 'Managing non legal funding since 2013',
+        'user': request.user
         })
     output = template.render(variables)
     return HttpResponse(output)
 
 def userpage(request, username):
     try:
-        user = User.objects.get(user=username)
+        user = User.objects.get(id=username)
     except:
         raise Http404('User not found.')
 
@@ -70,23 +69,6 @@ def userpage(request, username):
     output = template.render(variables)
     return HttpResponse(output)
 
-def cinemajson(request):
-    user = request.user
-    if not user:
-        raise Http404('User not found.')
-    cinema = user.sobre_set.all()
-    cinemajson = []
-    for s in cinema:
-        sobre = dict()
-        sobre["date"]=s.date.ctime()
-        sobre["donor"]=s.user.name
-        sobre["user"]=s.user.user
-        cinemajson.append(sobre)
-
-
-    #return HttpResponse(simplejson.dumps(cinemajson),mimetype='application/json')
-
-
 class CinemaList(ListView, ConnegResponseMixin):
     model = Cinema
     queryset = Cinema.objects.all()
@@ -95,7 +77,32 @@ class CinemaList(ListView, ConnegResponseMixin):
 
 class CinemaDetail(DetailView, ConnegResponseMixin):
     model = Cinema
+    queryset = Cinema.objects.all()
     template_name = 'icinema/cinema_detail.html'
 
+class FilmsList(ListView, ConnegResponseMixin):
+    model = Films
+    queryset = Films.objects.all()
 
 
+class FilmsDetail(DetailView, ConnegResponseMixin):
+    model = Films
+    template_name = 'icinema/films_detail.html'
+
+class PerformancesList(ListView, ConnegResponseMixin):
+    model = Performances
+    queryset = Performances.objects.all()
+
+
+class PerformancesDetail(DetailView, ConnegResponseMixin):
+    model = Performances
+    queryset = Performances.objects.all()
+    template_name = 'icinema/films_detail.html'
+
+def performances(request, pk):
+    films = get_object_or_404(Films, pk=pk)
+    performances = FilmsPerfomances(
+        user=request.user,
+        films=films)
+    performances.save()
+    return HttpResponseRedirect(reverse('icinema:films_detail', args=(films.id,)))
