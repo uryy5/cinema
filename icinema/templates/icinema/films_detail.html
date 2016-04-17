@@ -1,0 +1,47 @@
+{% extends "icinema/base.html" %}
+
+{% block content %}
+
+<h1>
+    {{ films.tittle }}
+
+</h1>
+
+<p>Pelicula realitzada per:  <a href="{% url 'icinema:cinema_detail' films.cinema.id 'html' %}">{{ films.cinema.name }}</a></p>
+<p>
+    Genere: {{ films.classification }} <br/>
+    Classificacio: {{ films.rating }} <br/>
+    Edat recomendada: {{ films.advisory_age }} <br/>
+    Sipnosis:{{ films.sipnosis }} <br/>
+    Duracio:{{ films.duration }} minuts <br/>
+    Autors: ({{ films.autors }})  <br/>
+    Directors: {{ films.directors }}
+</p>
+<h2>Horaris de la pelicula entre altres:</h2>
+<ul>
+
+
+<table>
+<tr>
+  <td><strong>Sala</strong></td>
+  <td><strong>Horari</strong></td>
+  <td><strong>Data</strong></td>
+  <td><strong>Disponible</strong></td>
+<tr>
+    {% for performances in films.filmsperfomances_set.all %}
+  <td>{{ performances.type }}</td>
+  <td>{{ performances.time }}</td>
+  <td>{{ performances.date }}</td>
+  <td>{{ performances.avaiable }}</td>
+</tr>
+</tr>
+
+</table>
+
+    {% endfor %}
+</ul>
+{% endblock %}
+
+{% block footer %}
+    Created by {{ films.user }}
+{% endblock %}
