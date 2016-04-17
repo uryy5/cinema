@@ -6,8 +6,17 @@
   <h1>{{ pagetitle }}</h1>
 
 {% if user.username %}
-<p>Welcome {{ user.username }}!
-To bribes and envelopes management !</p>
+    <p> S'ha logeat correctament en dos segons serà redirigit...</p>
+<script>
+    function redirect(){
+       window.location.href = "/icinema/";
+    }
+
+    setTimeout(redirect, 2000); //2000 is equivalent to 2 seconds
+</script>
+
+
+
 {% else %}
 <p>Welcome anonymous:
 Must  <a href="/login/">sign in</a>
