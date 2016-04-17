@@ -5,7 +5,7 @@ from django.views.generic.base import RedirectView
 
 #from models import Films
 #from forms import CinemaForm
-from views import CinemaDetail, CinemaList
+from views import CinemaDetail, CinemaList, FilmsDetail, FilmsList,PerformancesList,PerformancesDetail
 
 urlpatterns = patterns('',
     # Home page
@@ -17,8 +17,26 @@ urlpatterns = patterns('',
     url(r'^cinemes\.(?P<extension>(json|xml|html))$',
         CinemaList.as_view(),
         name='cinema_list'),
-
+    # Cinemes films detail
     url(r'^cinemes/(?P<pk>\d+)\.(?P<extension>(json|xml|html))$',
         CinemaDetail.as_view(),
         name='cinema_detail'),
+    # Cinemes films list
+    url(r'^cinemes/(?P<pk>\d+)/films\.(?P<extension>(json|xml))$',
+       FilmsList.as_view(),
+       name='films_list'),
+
+    # Cinemes films details
+    url(r'^cinemes/(?P<pkr>\d+)/films/(?P<pk>\d+)\.(?P<extension>(json|xml|html))$',
+       FilmsDetail.as_view(),
+       name='films_detail'),
+    #Cinemes performances list
+    url(r'^cinemes/(?P<pk>\d+)/performances\.(?P<extension>(json|xml))$',
+       PerformancesList.as_view(),
+       name='performances_list'),
+
+   # Cinemes performances details
+    url(r'^cinemes/(?P<pkr>\d+)/performances/(?P<pk>\d+)\.(?P<extension>(json|xml|html))$',
+       PerformancesDetail.as_view(),
+       name='performances_detail'),
 )
