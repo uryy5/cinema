@@ -47,5 +47,16 @@ urlpatterns = patterns('',
     #Create Cinemes
     url(r'^cinemes/create/$',CinemaCreate.as_view(),name='cinema_create'),
 
+    #Create view for update details of films
+    url(r'^cinemes/(?P<pkr>\d+)/films/(?P<pk>\d+)/edit/$', UpdateView.as_view(
+       model=Films,
+       template_name='icinema/form.html',
+       form_class=FilmForm),
+       name='film_edit'),
+
+    #Necessary for a return correct by edit parameters of films
+    url(r'^cinemes/(?P<pkr>\d+)/films/(?P<pk>\d+)(\.(?P<extension>(json|xml)))?$',
+       FilmsDetail.as_view(),
+       name='films_detail'),
 
 )
