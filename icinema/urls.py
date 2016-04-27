@@ -55,8 +55,8 @@ urlpatterns = patterns('',
        name='film_edit'),
 
     #Necessary for a return correct by edit parameters of films
-    url(r'^cinemes/(?P<pkr>\d+)/films/(?P<pk>\d+)(\.(?P<extension>(json|xml)))?$',
-       FilmsDetail.as_view(),
-       name='films_detail'),
+    url(r'^cinemes/(?P<pk>\d+)/films/(\.(?P<extension>(json|xml)))?$',
+                           FilmsDetail.as_view(),
+                           name='films_detail'),
 
 )
