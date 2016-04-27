@@ -4,7 +4,7 @@ from models import Cinema, Films
 class CinemaForm(ModelForm):
     class Meta:
         model = Cinema
-        exclude = ('name',)
+        exclude = ('',)
 
 class FilmForm(ModelForm):
     class Meta:
