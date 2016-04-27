@@ -6,7 +6,7 @@ from datetime import date
 
 # Create your models here.
 class Cinema (models.Model):
-    name = models.TextField(blank=True, null=True)
+    name = models.TextField()
     cinema_url=models.URLField(blank=True,null=True)
     adress=models.TextField(blank=True,null=True)
     city = models.TextField(blank=True, null=True)
