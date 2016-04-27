@@ -17,6 +17,11 @@ urlpatterns = patterns('',
     url(r'^cinemes\.(?P<extension>(json|xml|html))$',
         CinemaList.as_view(),
         name='cinema_list'),
+    #URL for edit cinemes.
+    url(r'^cinemes/(?P<pk>\d+)(\.(?P<extension>(json|xml)))?$',
+        CinemaDetail.as_view(),
+        name='cinema_detail'),
+
     # Cinemes films detail
     url(r'^cinemes/(?P<pk>\d+)\.(?P<extension>(json|xml|html))$',
         CinemaDetail.as_view(),
@@ -41,11 +46,6 @@ urlpatterns = patterns('',
        name='performances_detail'),
     #Create Cinemes
     url(r'^cinemes/create/$',CinemaCreate.as_view(),name='cinema_create'),
-    #Update Cinemes
-    url(r'^cinemes/(?P<pk>\d+)/edit/$',UpdateView.as_view(
-                               model=Cinema,
-                               template_name='icinema/form.html',
-                               form_class=CinemaForm),
-                               name='cinema_edit'),
+
 
 )
