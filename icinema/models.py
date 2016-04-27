@@ -39,7 +39,7 @@ class Films (models.Model):
     def __unicode__(self):
         return u"%s" % self.tittle
     def get_absolute_url(self):
-        return reverse('icinema:film_detail', kwargs={'pk': self.pk})
+        return reverse('icinema:films_detail', kwargs={'pk': self.pk})
 
 
 class Performances(models.Model):
