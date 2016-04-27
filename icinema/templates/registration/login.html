@@ -3,21 +3,31 @@
   <title>Cinema App - Sign In</title>
   </head>
 <body>
-  <h1>User Login</h1>
+    {% if form.errors %}
+        <p>Your username and password didn't match. Please try again.</p>
+    {% endif %}
 
-  {% if form.has_errors %}
-  <p>Error on user validation.</p>
-  {% endif %}
+  <h1>User Login </h1>
 
-  <form method="post" action=".">
-  <p><label for="id_username">User:</label>
-  {{ form.username }}</p>
-  <p><label for="id_password">Pass:</label>
-  {{ form.password }}</p>
-  <input type="hidden" name="next" value="/" />
-  <input type="submit" value="login" />
-  {% csrf_token %}
-  </form>
+    <form method="post" action="{% url 'login' %}">
+        <table>
+            <tr>
+                <td>{{ form.username.label_tag }}</td>
+                <td>{{ form.username }}</td>
+            </tr>
+            <tr>
+                <td>{{ form.password.label_tag }}</td>
+                <td>{{ form.password }}</td>
+            </tr>
+            <tr>
+                <td><input type="hidden" name="next" value="/"/></td>
+            </tr>
+        </table>
+
+        <input type="submit" value="login" />
+
+        {% csrf_token %}
+    </form>
 
 </body>
 </html>
