@@ -5,7 +5,7 @@ from django.views.generic.base import RedirectView
 
 #from models import Films
 #from forms import CinemaForm
-from views import CinemaDetail, CinemaList, FilmsDetail, FilmsList,PerformancesList,PerformancesDetail
+from views import *
 
 urlpatterns = patterns('',
     # Home page
@@ -39,4 +39,13 @@ urlpatterns = patterns('',
     url(r'^cinemes/(?P<pkr>\d+)/performances/(?P<pk>\d+)\.(?P<extension>(json|xml|html))$',
        PerformancesDetail.as_view(),
        name='performances_detail'),
+    #Create Cinemes
+    url(r'^cinemes/create/$',CinemaCreate.as_view(),name='cinema_create'),
+    #Update Cinemes
+    url(r'^cinemes/(?P<pk>\d+)/edit/$',UpdateView.as_view(
+                               model=Cinema,
+                               template_name='icinema/form.html',
+                               form_class=CinemaForm),
+                               name='cinema_edit'),
+
 )
