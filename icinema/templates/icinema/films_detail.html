@@ -4,7 +4,9 @@
 
 <h1>
     {{ films.tittle }}
-
+    {% if user == films.user %}
+        (<a href="{% url 'icinema:film_edit' films.cinema.id films.id %}">edit</a>)
+    {% endif %}
 </h1>
 
 <p>Pelicula realitzada per:  <a href="{% url 'icinema:cinema_detail' films.cinema.id 'html' %}">{{ films.cinema.name }}</a></p>
