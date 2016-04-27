@@ -16,7 +16,7 @@ from django.contrib.auth.models import User
 #from django.utils import simplejson
 
 from models import Cinema,Films,Performances,FilmsPerfomances
-from forms import Cinema
+from forms import CinemaForm
 # Create your views here.
 
 
@@ -106,3 +106,12 @@ def performances(request, pk):
         films=films)
     performances.save()
     return HttpResponseRedirect(reverse('icinema:films_detail', args=(films.id,)))
+
+class CinemaCreate(CreateView):
+    model = Cinema
+    template_name = 'icinema/form.html'
+    form_class = CinemaForm
+
+    def form_valid(self, form):
+        form.instance.user = self.request.user
+        return super(CinemaCreate, self).form_valid(form)
