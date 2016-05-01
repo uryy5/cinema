@@ -66,4 +66,6 @@ urlpatterns = patterns('',
        form_class=CinemaForm),
        name='cinema_edit'),
 
+    # Create Films
+    url(r'^cinemes/(\.(?P<extension>(json|xml)))?/films/$', FilmCreate.as_view(), name='film_create'),
 )
