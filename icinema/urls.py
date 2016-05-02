@@ -59,13 +59,13 @@ urlpatterns = patterns('',
        FilmsDetail.as_view(),
        name='films_detail'),
 
-    # Create view for update details of films
-    url(r'^cinemes/(?P<pkr>\d+)/(?P<pk>\d+)/edit/$', UpdateView.as_view(
+    # Create view for update details of cinema
+    url(r'^cinemes/(?P<pk>\d+)/edit/$', UpdateView.as_view(
        model=Cinema,
        template_name='icinema/form.html',
        form_class=CinemaForm),
        name='cinema_edit'),
 
     # Create Films
-    url(r'^cinemes/(\.(?P<extension>(json|xml)))?/films/$', FilmCreate.as_view(), name='film_create'),
+    url(r'^cinemes/(?P<pkr>\d+)/films/$', FilmCreate.as_view(), name='film_create'),
 )

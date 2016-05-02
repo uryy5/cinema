@@ -23,7 +23,6 @@ class Cinema (models.Model):
         return reverse('icinema:cinema_detail', kwargs={'pk': self.pk})
 
 class Films (models.Model):
-    id_film=models.IntegerField()
     tittle=models.TextField(blank=True,null=True)
     classification=models.TextField(blank=True,null=True)
     RATING_CHOICES = ((1, 'one'), (2, 'two'), (3, 'three'), (4, 'four'), (5, 'five'))
