@@ -9,5 +9,5 @@ class CinemaForm(ModelForm):
 class FilmForm(ModelForm):
     class Meta:
         model = Films
-        exclude = ('user', 'cinema', 'tittle',)
+        exclude = ('user', 'cinema',)
 
