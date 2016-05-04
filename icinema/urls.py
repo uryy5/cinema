@@ -67,5 +67,5 @@ urlpatterns = patterns('',
        name='cinema_edit'),
 
     # Create Films
-    url(r'^cinemes/(?P<pkr>\d+)/films/$', FilmCreate.as_view(), name='film_create'),
+    url(r'^cinemes/(?P<pkr>\d+)/films/create$', FilmCreate.as_view(), name='film_create'),
 )
