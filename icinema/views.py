@@ -123,4 +123,5 @@ class FilmCreate(CreateView):
 
     def form_valid(self, form):
         form.instance.user = self.request.user
+        form.instance.cinema = Cinema.objects.get(id=self.kwargs['pkr'])
         return super(FilmCreate, self).form_valid(form)
