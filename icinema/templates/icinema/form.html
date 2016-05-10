@@ -2,49 +2,122 @@
 {% load staticfiles %}
 
 {% block content %}
+<html>
 
-    <script>
-        $(function() {
-            $("#id_city").autocomplete({
-                source: function( request, response ) {
-                    $.ajax({
-                        url: "http://ws.geonames.org/searchJSON",
-                        dataType: "jsonp",
-                        data: {
-                            featureClass: "P",
-                            maxRows: 10,
-                            name_startsWith: request.term,
-                            username: "demo"
-                        },
-                        success: function( data ) {
-                            response( $.map( data.geonames, function( item ) {
-                                return {
-                                    label: item.name + (item.adminName1 ? ", " + item.adminName1 : "") + ", " + item.countryName,
-                                    value: item.name,
-                                    stateOrProvince: item.adminName1,
-                                    countryName: item.countryName
-                                }
-                            }));
-                        }
-                    });
-                },
-                minLength: 2,
-                select: function( event, ui ) {
-                    if (ui.item) {
-                        $("#id_stateOrProvince").val(ui.item.stateOrProvince);
-                        $("#id_country").val(ui.item.countryName);
-                        $("#id_postcode").val("");
-                    }
+<head>
+  <script data-require="jquery@*" data-semver="2.2.0" src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
+  <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?sensor=false"></script>
+  <link rel="stylesheet" href="https://code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css" />
+  <script src="https://code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+  <script>
+    $(function() {
+
+      var getAddressField = function(components, fieldType) {
+        var component = $.grep(components, function(component) {
+          return component.types[0] === fieldType; })[0];
+        return (component? component.long_name : "")
+      };
+
+      var getStreetAndNumber = function(components) {
+        var street = getAddressField(components, "route");
+        var number = getAddressField(components, "street_number");
+        return street.concat(number? ", "+number : "");
+      };
+
+      var geocoder;
+
+      $("#id_address").autocomplete({
+        source: function(request, response) {
+          if (geocoder == null) {
+            geocoder = new google.maps.Geocoder();
+          }
+          geocoder.geocode({
+              'address': request.term
+            },
+            function(data, status) {
+              console.log(data);
+              response($.map(data, function(item) {
+                return {
+                  label: item.formatted_address,
+                  value: getStreetAndNumber(item.address_components),
+                  city: getAddressField(item.address_components, "locality"),
+                  postalcode: getAddressField(item.address_components, "postal_code"),
+                  province: getAddressField(item.address_components, "administrative_area_level_2"),
+                  country: getAddressField(item.address_components, "country")
                 }
+              }));
             });
-        });
-    </script>
+        },
+        minLength: 5,
+        select: function(event, ui) {
+          if (ui.item) {
+            $("#id_city").val(ui.item.city);
+            $("#id_postalcode").val(ui.item.postalcode);
+            $("#id_province").val(ui.item.province);
+            $("#id_country").val(ui.item.country);
+          }
+        }
+      });
+    });
+  </script>
+</head>
+
+<body>
+  <h3>Add Cinemas:</h3>
+  <form>
+    <table>
+      <tr>
+        <td>Cinema Name:</td>
+        <td>
+          <input id="id_cinema.name" /></td>
+      </tr>
+      <tr>
+        <td>Cinema url:</td>
+        <td>
+          <input id="id_cinema.cinema_url" /></td>
+      </tr>
+      <tr>
+        <td>Cinema Phone:</td>
+        <td>
+          <input id="id_cinema.telephone" /></td>
+      </tr>
+      <tr>
+        <td>Address:</td>
+        <td>
+          <input id="id_address" /></td>
+      </tr>
+      <tr>
+        <td>City:</td>
+        <td>
+          <input id="id_city" disabled/>
+        </td>
+      </tr>
+      <tr>
+        <td>Postal Code:</td>
+        <td>
+          <input id="id_postalcode" disabled/>
+        </td>
+      </tr>
+      <tr>
+        <td>Province:</td>
+        <td>
+          <input id="id_province" disabled/>
+        </td>
+      </tr>
+      <tr>
+        <td>Country:</td>
+        <td>
+          <input id="id_country" disabled/>
+        </td>
+      </tr>
+    </table>
+  </form>
+</body>
+
+</html>
 
     <form method="post" enctype="multipart/form-data" action="">
         {% csrf_token %}
-        <table>
-            {{ form.as_table }}
-        </table>
         <input type="submit" value="Submit"/>
     </form>
 
