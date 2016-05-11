@@ -8,7 +8,7 @@ from datetime import date
 class Cinema (models.Model):
     name = models.TextField()
     cinema_url=models.URLField(blank=True,null=True)
-    adress=models.TextField(blank=True,null=True)
+    address=models.TextField(blank=True,null=True)
     city = models.TextField(blank=True, null=True)
     postcode=models.IntegerField()
     stateOrProvince = models.TextField(blank=True, null=True)
@@ -48,6 +48,11 @@ class Performances(models.Model):
     user = models.ForeignKey(User, default=1)
     date = models.DateField(default=date.today)
 
+    def __unicode__(self):
+        return u"%s" % self.user
+
+    def get_absolute_url(self):
+        return reverse('icinema:films_detail', kwargs={'pkr': self.films.cinema.pk, 'pk':self.films.pk, 'extension': 'html'})
 
 class FilmsPerfomances(Performances):
     films = models.ForeignKey(Films)
