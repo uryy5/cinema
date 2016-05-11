@@ -16,7 +16,7 @@ from django.contrib.auth.models import User
 #from django.utils import simplejson
 
 from models import Cinema,Films,Performances,FilmsPerfomances
-from forms import CinemaForm, FilmForm
+from forms import *
 # Create your views here.
 
 
@@ -119,9 +119,19 @@ class CinemaCreate(CreateView):
 class FilmCreate(CreateView):
     model = Films
     template_name = 'icinema/form.html'
-    form_class = FilmForm
+    form_class = FilmCreateForm
 
     def form_valid(self, form):
         form.instance.user = self.request.user
         form.instance.cinema = Cinema.objects.get(id=self.kwargs['pkr'])
         return super(FilmCreate, self).form_valid(form)
+
+class PerformanceCreate(CreateView):
+    model = FilmsPerfomances
+    template_name = 'icinema/form.html'
+    form_class = PerformancesCreateForm
+
+    def form_valid(self, form):
+        form.instance.user = self.request.user
+        form.instance.films = Films.objects.get(id=self.kwargs['pk'])
+        return super(PerformanceCreate, self).form_valid(form)
