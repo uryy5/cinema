@@ -3,8 +3,8 @@ from django.core.urlresolvers import reverse_lazy
 from django.views.generic import UpdateView
 from django.views.generic.base import RedirectView
 
-#from models import Films
-#from forms import CinemaForm
+from models import *
+from forms import *
 from views import *
 
 urlpatterns = patterns('',
@@ -70,5 +70,16 @@ urlpatterns = patterns('',
     url(r'^cinemes/(?P<pkr>\d+)/films/create$', FilmCreate.as_view(), name='film_create'),
 
     # Create Performances (Hours, Sala )
-    url(r'^cinemes/(?P<pkr>\d+)/films/(?P<pk>\d+)/performance$', PerformanceCreate.as_view(), name='performance_create'),
+    url(r'^cinemes/(?P<pkr>\d+)/films/(?P<pk>\d+)/add_performance$', PerformanceCreate.as_view(), name='performance_create'),
+
+    # Create view for edit details of performances
+    url(r'^cinemes/(?P<pkr>\d+)/films/(?P<pk>\d+)/edit_performance/$', UpdateView.as_view(
+       model=Performances,
+       template_name='icinema/form.html',
+       form_class=PerformancesEditForm),
+       name='performances_edit'),
+
+
+
+
 )

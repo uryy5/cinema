@@ -20,3 +20,8 @@ class PerformancesCreateForm(ModelForm):
     class Meta:
         model = FilmsPerfomances
         exclude = ('user', 'cinema','films')
+
+class PerformancesEditForm(ModelForm):
+    class Meta:
+        model = FilmsPerfomances
+        exclude = ('user','films','cinema')

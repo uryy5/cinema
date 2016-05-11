@@ -4,10 +4,12 @@ from django.core import serializers
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
-from django.views.generic import DetailView, ListView
+from django.views.generic import DetailView, ListView, DeleteView
 from django.views.generic.base import TemplateResponseMixin
 from django.views.generic.edit import CreateView
 from django.shortcuts import render
+from django.core.urlresolvers import reverse_lazy
+from icinema.models import Cinema
 
 from django.http import HttpResponse, Http404
 from django.template import Context
@@ -135,3 +137,13 @@ class PerformanceCreate(CreateView):
         form.instance.user = self.request.user
         form.instance.films = Films.objects.get(id=self.kwargs['pk'])
         return super(PerformanceCreate, self).form_valid(form)
+
+class DeleteContactView(DeleteView):
+    model = Cinema
+    template_name = 'icinema/delete_contact.html'
+
+    def get_success_url(self):
+        return reverse('icinema:cinema_list' , kwargs={'extension': 'html' })
+
+
+

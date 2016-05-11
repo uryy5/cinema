@@ -31,4 +31,6 @@ urlpatterns = patterns('',
     url(r'^icinema/', include('icinema.urls', namespace='icinema')),
     url(r'^logout/$', 'django.contrib.auth.views.logout', name='logout', kwargs={'next_page': '/'}),
     url(r'^admin/', include(admin.site.urls)),
+    url(r'^delete/(?P<pk>\d+)/$', DeleteContactView.as_view(), name='contacts-delete', ),
+   url(r'^icinema/$', CinemaList, name='cinema_list'),
 )
