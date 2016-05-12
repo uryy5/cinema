@@ -6,7 +6,7 @@
 
 <p>Are you sure you want to delete the contact {{ cinema.id }}?</p>
 
-<form action="{% url "contacts-delete" pk=cinema.id %}" method="POST">
+<form action="{% url "cinema-delete" pk=cinema.id %}" method="POST">
   {% csrf_token %}
 
   <input type="submit" value="Yes, delete." />

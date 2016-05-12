@@ -138,12 +138,27 @@ class PerformanceCreate(CreateView):
         form.instance.films = Films.objects.get(id=self.kwargs['pk'])
         return super(PerformanceCreate, self).form_valid(form)
 
-class DeleteContactView(DeleteView):
+class DeleteCinemaView(DeleteView):
     model = Cinema
-    template_name = 'icinema/delete_contact.html'
+    template_name = 'icinema/delete_cinema.html'
 
     def get_success_url(self):
         return reverse('icinema:cinema_list' , kwargs={'extension': 'html' })
+
+class DeleteFilmView(DeleteView):
+    model = Films
+    template_name = 'icinema/delete_film.html'
+
+    def get_success_url(self):
+        return reverse('icinema:cinema_list', kwargs={ 'extension': 'html'})
+
+class DeletePerformanceView(DeleteView):
+    model = Performances
+    template_name = 'icinema/delete_performance.html'
+
+    def get_success_url(self):
+        return reverse('icinema:cinema_list', kwargs={'extension': 'html'})
+
 
 
 

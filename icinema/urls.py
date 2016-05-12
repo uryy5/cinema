@@ -73,8 +73,8 @@ urlpatterns = patterns('',
     url(r'^cinemes/(?P<pkr>\d+)/films/(?P<pk>\d+)/add_performance$', PerformanceCreate.as_view(), name='performance_create'),
 
     # Create view for edit details of performances
-    url(r'^cinemes/(?P<pkr>\d+)/films/(?P<pk>\d+)/edit_performance/$', UpdateView.as_view(
-       model=Performances,
+    url(r'^cinemes/(?P<pk>\d+)/films/(?P<pkx>\d+)/edit_performance/$', UpdateView.as_view(
+       model=FilmsPerfomances,
        template_name='icinema/form.html',
        form_class=PerformancesEditForm),
        name='performances_edit'),
