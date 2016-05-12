@@ -4,10 +4,12 @@ from django.core import serializers
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
-from django.views.generic import DetailView, ListView
+from django.views.generic import DetailView, ListView, DeleteView
 from django.views.generic.base import TemplateResponseMixin
 from django.views.generic.edit import CreateView
 from django.shortcuts import render
+from django.core.urlresolvers import reverse_lazy
+from icinema.models import Cinema
 
 from django.http import HttpResponse, Http404
 from django.template import Context
@@ -16,7 +18,7 @@ from django.contrib.auth.models import User
 #from django.utils import simplejson
 
 from models import Cinema,Films,Performances,FilmsPerfomances
-from forms import CinemaForm, FilmForm
+from forms import *
 # Create your views here.
 
 
@@ -119,9 +121,44 @@ class CinemaCreate(CreateView):
 class FilmCreate(CreateView):
     model = Films
     template_name = 'icinema/form.html'
-    form_class = FilmForm
+    form_class = FilmCreateForm
 
     def form_valid(self, form):
         form.instance.user = self.request.user
         form.instance.cinema = Cinema.objects.get(id=self.kwargs['pkr'])
         return super(FilmCreate, self).form_valid(form)
+
+class PerformanceCreate(CreateView):
+    model = FilmsPerfomances
+    template_name = 'icinema/form.html'
+    form_class = PerformancesCreateForm
+
+    def form_valid(self, form):
+        form.instance.user = self.request.user
+        form.instance.films = Films.objects.get(id=self.kwargs['pk'])
+        return super(PerformanceCreate, self).form_valid(form)
+
+class DeleteCinemaView(DeleteView):
+    model = Cinema
+    template_name = 'icinema/delete_cinema.html'
+
+    def get_success_url(self):
+        return reverse('icinema:cinema_list' , kwargs={'extension': 'html' })
+
+class DeleteFilmView(DeleteView):
+    model = Films
+    template_name = 'icinema/delete_film.html'
+
+    def get_success_url(self):
+        return reverse('icinema:cinema_list', kwargs={ 'extension': 'html'})
+
+class DeletePerformanceView(DeleteView):
+    model = Performances
+    template_name = 'icinema/delete_performance.html'
+
+    def get_success_url(self):
+        return reverse('icinema:cinema_list', kwargs={'extension': 'html'})
+
+
+
+

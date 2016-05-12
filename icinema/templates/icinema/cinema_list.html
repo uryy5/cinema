@@ -7,7 +7,11 @@
 <ul>
     {% for cinema in cinema_list %}
         <li><a href="{% url 'icinema:cinema_detail' cinema.id 'html' %}">
-            {{ cinema.name }}</a></li>
+            {{ cinema.name }}</a>
+        {% if user == cinema.user %}
+        (<a href="{% url "cinema-delete" pk=cinema.id %}">Delete</a>)
+        {% endif %}</li>
+</form>
     {% empty %}<li>Sorry, no cinemes registered yet.</li>
     {% endfor %}
 </ul>

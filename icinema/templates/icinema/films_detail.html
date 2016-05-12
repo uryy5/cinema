@@ -19,28 +19,39 @@
     Autors: ({{ films.autors }})  <br/>
     Directors: {{ films.directors }}
 </p>
-<h2>Horaris de la pelicula entre altres:</h2>
+<h2>Horaris de la pelicula entre altres:
+ {% if user.is_authenticated %}(<a href="{% url 'icinema:performance_create' films.cinema.id films.id%}">add</a>){% endif %}
+
+</h2>
 <ul>
 
 
 <table>
 <tr>
-  <td><strong>Sala</strong></td>
-  <td><strong>Horari</strong></td>
-  <td><strong>Data</strong></td>
-  <td><strong>Disponible</strong></td>
+  <th><strong>Sala</strong></th>
+  <th><strong>Horari</strong></th>
+  <th><strong>Data</strong></th>
+  <th><strong>Disponible</strong></th>
+</tr>
 <tr>
     {% for performances in films.filmsperfomances_set.all %}
+
   <td>{{ performances.type }}</td>
   <td>{{ performances.time }}</td>
   <td>{{ performances.date }}</td>
   <td>{{ performances.avaiable }}</td>
+    <td>{% if user == films.user %}
+        (<a href="{% url 'icinema:performances_edit' films.cinema.id films.id %}">edit</a>)
+    {% endif %}
+        {% if user == films.user %}
+        (<a href="{% url "performance-delete"  films.cinema.id films.id  %}">Delete</a>)
+    {% endif %}
+    </td>
 </tr>
-</tr>
-
+    {% endfor %}
 </table>
 
-    {% endfor %}
+
 </ul>
 {% endblock %}
 
