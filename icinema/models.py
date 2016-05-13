@@ -24,9 +24,9 @@ class Cinema (models.Model):
 
 class Films (models.Model):
     tittle=models.TextField(blank=True,null=True)
-    classification=models.TextField(blank=True,null=True)
-    RATING_CHOICES = ((1, 'one'), (2, 'two'), (3, 'three'), (4, 'four'), (5, 'five'))
-    rating = models.PositiveSmallIntegerField('Classificacio', blank=False, default=3, choices=RATING_CHOICES)
+    genre_classification=models.TextField(blank=True,null=True)
+    RATING_CHOICES = ((1, '*'), (2, '**'), (3, '***'), (4, '****'), (5, '*****'))
+    rating = models.PositiveSmallIntegerField('Rating', blank=False, default=3, choices=RATING_CHOICES)
     advisory_age=models.IntegerField()
     sipnosis=models.TextField(blank=True,null=True)
     duration=models.IntegerField()

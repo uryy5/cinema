@@ -16,23 +16,20 @@ from django.conf.urls import patterns, include, url
 
 from django.contrib import admin
 admin.autodiscover()
+from rest_framework.urlpatterns import format_suffix_patterns
+from views import APIFilmDetail, APIFilmList, APICinemaDetail, APICinemaList, APIPerformancesDetail, APIPerformancesList
 
-from icinema.views import *
+urlpatterns = [
+
+    #RESTful API
+    url(r'^api/auth/', include('rest_framework.urls', namespace='rest_framework')),
+    url(r'^api/cinema/$', APICinemaList.as_view(), name='cinema-list'),
+    url(r'^api/cinema/(?P<pk>\d+)/$', APICinemaDetail.as_view(), name='cinema-detail'),
+    url(r'^api/films/$', login_required(APIFilmList.as_view()), name='film-list'),
+    url(r'^api/films/(?P<pk>\d+)/$', APIFilmDetail.as_view(), name='film-detail'),
+    url(r'^api/performances/$', APIPerformancesList.as_view(), name='performances-list'),
+    url(r'^api/performances/(?P<pk>\d+)/$', APIPerformancesDetail.as_view(), name='performances-detail'),
+]
 
 
-urlpatterns = patterns('',
-    # Examples:
-    # url(r'^$', 'sobres.views.home', name='home'),
-    # url(r'^blog/', include('blog.urls')),
-
-    url(r'^user/(\w+)/$', userpage),
-    url(r'^$', mainpage, name='home'),
-    url(r'^login/$', 'django.contrib.auth.views.login',name='login'),
-    url(r'^icinema/', include('icinema.urls', namespace='icinema')),
-    url(r'^logout/$', 'django.contrib.auth.views.logout', name='logout', kwargs={'next_page': '/'}),
-    url(r'^admin/', include(admin.site.urls)),
-    url(r'^delete/(?P<pk>\d+)/$', DeleteCinemaView.as_view(), name='cinema-delete', ),
-    url(r'^delete_film/(?P<pk>\d+)/$', DeleteFilmView.as_view(), name='films-delete', ),
-    url(r'^delete_performance/(?P<pk>\d+)/(?P<pkr>\d+)/$', DeletePerformanceView.as_view(), name='performance-delete', ),
-   url(r'^icinema/$', CinemaList, name='cinema_list'),
-)
+urlpatterns = format_suffix_patterns(urlpatterns, allowed=['api', 'json', 'xml'])

@@ -17,7 +17,13 @@ from django.template.loader import get_template
 from django.contrib.auth.models import User
 #from django.utils import simplejson
 
-from models import Cinema,Films,Performances,FilmsPerfomances
+
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from rest_framework.reverse import reverse
+from rest_framework import generics, permissions
+from models import Performances, Cinema, Films
+from serializers import CinemaSerializer, FilmSerializer, PerformancesSerializer
 from forms import *
 # Create your views here.
 
@@ -159,6 +165,38 @@ class DeletePerformanceView(DeleteView):
     def get_success_url(self):
         return reverse('icinema:cinema_list', kwargs={'extension': 'html'})
 
+class IsOwnerOrReadOnly(permissions.BasePermission):
 
+    def has_object_permission(self, request, view, obj):
+        # Read permissions are allowed to any request,
+        # so we'll always allow GET, HEAD or OPTIONS requests.
+        if request.method in permissions.SAFE_METHODS:
+            return True
+        # Instance must have an attribute named `owner`.
+        return obj.user == request.user
+
+class APICinemaList(generics.ListCreateAPIView):
+    model = Cinema
+    serializer_class = CinemaSerializer
+
+class APICinemaDetail(generics.RetrieveUpdateDestroyAPIView):
+    model = Cinema
+    serializer_class = CinemaSerializer
+
+class APIFilmList(generics.ListCreateAPIView):
+    model = Films
+    serializer_class = FilmSerializer
+
+class APIFilmDetail(generics.RetrieveUpdateDestroyAPIView):
+    model = Films
+    serializer_class = FilmSerializer
+
+class APIPerformancesList(generics.ListCreateAPIView):
+    model = Performances
+    serializer_class = PerformancesSerializer
+
+class APIPerformancesDetail(generics.RetrieveUpdateDestroyAPIView):
+    model = Performances
+    serializer_class = PerformancesSerializer
 
 
