@@ -21,38 +21,16 @@
 </p>
 <h2>Horaris de la pelicula entre altres:
  {% if user.is_authenticated %}(<a href="{% url 'icinema:performance_create' films.cinema.id films.id%}">add</a>){% endif %}
-
 </h2>
-<ul>
-
-
-<table>
-<tr>
-  <th><strong>Sala</strong></th>
-  <th><strong>Horari</strong></th>
-  <th><strong>Data</strong></th>
-  <th><strong>Disponible</strong></th>
-</tr>
-<tr>
-    {% for performances in films.filmsperfomances_set.all %}
-
-  <td>{{ performances.type }}</td>
-  <td>{{ performances.time }}</td>
-  <td>{{ performances.date }}</td>
-  <td>{{ performances.avaiable }}</td>
-    <td>{% if user == films.user %}
-        (<a href="{% url 'icinema:performances_edit' films.cinema.id films.id %}">edit</a>)
-    {% endif %}
-        {% if user == films.user %}
-        (<a href="{% url "performance-delete"  films.cinema.id films.id  %}">Delete</a>)
-    {% endif %}
-    </td>
-</tr>
+  {% for performance in films.filmsperfomances_set.all %}
+        <li><a href="{% url 'icinema:performances_detail'  performance.id 'html' %}">
+            {{ performance.time }} + info</a>
+     </li>
+    </form>
+    {% empty %}<li>Sorry, no Performances registered yet.</li>
     {% endfor %}
-</table>
-
-
 </ul>
+
 {% endblock %}
 
 {% block footer %}

@@ -1,0 +1,34 @@
+{% extends "icinema/base.html" %}
+
+{% block content %}
+
+<h1>
+    {{ performances.type }}
+    {% if user == performances.user %}
+      (<a href="{% url 'icinema:performances_edit' performances.id %}">edit</a>)
+    {% endif %}
+     {% if user == performances.user %}
+    (<a href="{% url "icinema:performance-delete" performances.id %}">Delete</a>)
+    {% endif %}
+</h1>
+<table>
+<tr>
+  <th><strong>Sala</strong></th>
+  <th><strong>Horari</strong></th>
+  <th><strong>Data</strong></th>
+  <th><strong>Disponible</strong></th>
+</tr>
+</table>
+<table>
+<tr>
+      <td>{{ performances.type }}</td>
+      <td>{{ performances.time }}</td>
+      <td>{{ performances.date }}</td>
+      <td>{{ performances.avaiable }}</td>
+</tr>
+</table>
+{% endblock %}
+
+{% block footer %}
+    Created by {{ performances.user }}
+{% endblock %}

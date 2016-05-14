@@ -24,7 +24,7 @@ class Cinema (models.Model):
 
 class Films (models.Model):
     tittle=models.TextField(blank=True,null=True)
-    genre_classification=models.TextField(blank=True,null=True)
+    genere_classification=models.TextField(blank=True,null=True)
     RATING_CHOICES = ((1, '*'), (2, '**'), (3, '***'), (4, '****'), (5, '*****'))
     rating = models.PositiveSmallIntegerField('Rating', blank=False, default=3, choices=RATING_CHOICES)
     advisory_age=models.IntegerField()
@@ -49,7 +49,7 @@ class Performances(models.Model):
     date = models.DateField(default=date.today)
 
     def __unicode__(self):
-        return u"%s" % self.user
+        return u"%s" % self.type
 
     def get_absolute_url(self):
         return reverse('icinema:films_detail', kwargs={'pkr': self.films.cinema.pk, 'pk':self.films.pk, 'extension': 'html'})

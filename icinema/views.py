@@ -4,28 +4,19 @@ from django.core import serializers
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
-from django.views.generic import DetailView, ListView, DeleteView
-from django.views.generic.base import TemplateResponseMixin
+from django.views.generic import DetailView, ListView, DeleteView,UpdateView
 from django.views.generic.edit import CreateView
-from django.shortcuts import render
-from django.core.urlresolvers import reverse_lazy
-from icinema.models import Cinema
-
+from django.core import serializers
 from django.http import HttpResponse, Http404
 from django.template import Context
 from django.template.loader import get_template
-from django.contrib.auth.models import User
-#from django.utils import simplejson
+from django.contrib.auth.decorators import login_required
+from django.core.exceptions import PermissionDenied
+from django.views.generic.base import TemplateResponseMixin
+from django.utils.decorators import method_decorator
 
-
-from rest_framework.decorators import api_view
-from rest_framework.response import Response
-from rest_framework.reverse import reverse
-from rest_framework import generics, permissions
-from models import Performances, Cinema, Films
-from serializers import CinemaSerializer, FilmSerializer, PerformancesSerializer
 from forms import *
-# Create your views here.
+
 
 
 class ConnegResponseMixin(TemplateResponseMixin):
@@ -105,15 +96,9 @@ class PerformancesList(ListView, ConnegResponseMixin):
 class PerformancesDetail(DetailView, ConnegResponseMixin):
     model = Performances
     queryset = Performances.objects.all()
-    template_name = 'icinema/films_detail.html'
+    template_name = 'icinema/performances_detail.html'
 
-def performances(request, pk):
-    films = get_object_or_404(Films, pk=pk)
-    performances = FilmsPerfomances(
-        user=request.user,
-        films=films)
-    performances.save()
-    return HttpResponseRedirect(reverse('icinema:films_detail', args=(films.id,)))
+
 
 class CinemaCreate(CreateView):
     model = Cinema
@@ -144,59 +129,26 @@ class PerformanceCreate(CreateView):
         form.instance.films = Films.objects.get(id=self.kwargs['pk'])
         return super(PerformanceCreate, self).form_valid(form)
 
-class DeleteCinemaView(DeleteView):
-    model = Cinema
-    template_name = 'icinema/delete_cinema.html'
 
-    def get_success_url(self):
-        return reverse('icinema:cinema_list' , kwargs={'extension': 'html' })
 
-class DeleteFilmView(DeleteView):
-    model = Films
-    template_name = 'icinema/delete_film.html'
+class LoginRequiredMixin(object):
+    @method_decorator(login_required())
+    def dispatch(self, *args, **kwargs):
+        return super(LoginRequiredMixin, self).dispatch(*args, **kwargs)
 
-    def get_success_url(self):
-        return reverse('icinema:cinema_list', kwargs={ 'extension': 'html'})
+class CheckIsOwnerMixin(object):
+    def get_object(self, *args, **kwargs):
+        obj = super(CheckIsOwnerMixin, self).get_object(*args, **kwargs)
+        if not obj.user == self.request.user:
+            raise PermissionDenied
+        return obj
 
-class DeletePerformanceView(DeleteView):
-    model = Performances
-    template_name = 'icinema/delete_performance.html'
+class LoginRequiredCheckIsOwnerUpdateView(LoginRequiredMixin, CheckIsOwnerMixin, UpdateView):
+    template_name = 'icinema/form.html'
 
-    def get_success_url(self):
-        return reverse('icinema:cinema_list', kwargs={'extension': 'html'})
+class LoginRequiredCheckIsOwnerDeleteView(LoginRequiredMixin, CheckIsOwnerMixin, DeleteView):
+    template_name = 'icinema/delete_object.html'
+    success_url = "/icinema"
 
-class IsOwnerOrReadOnly(permissions.BasePermission):
-
-    def has_object_permission(self, request, view, obj):
-        # Read permissions are allowed to any request,
-        # so we'll always allow GET, HEAD or OPTIONS requests.
-        if request.method in permissions.SAFE_METHODS:
-            return True
-        # Instance must have an attribute named `owner`.
-        return obj.user == request.user
-
-class APICinemaList(generics.ListCreateAPIView):
-    model = Cinema
-    serializer_class = CinemaSerializer
-
-class APICinemaDetail(generics.RetrieveUpdateDestroyAPIView):
-    model = Cinema
-    serializer_class = CinemaSerializer
-
-class APIFilmList(generics.ListCreateAPIView):
-    model = Films
-    serializer_class = FilmSerializer
-
-class APIFilmDetail(generics.RetrieveUpdateDestroyAPIView):
-    model = Films
-    serializer_class = FilmSerializer
-
-class APIPerformancesList(generics.ListCreateAPIView):
-    model = Performances
-    serializer_class = PerformancesSerializer
-
-class APIPerformancesDetail(generics.RetrieveUpdateDestroyAPIView):
-    model = Performances
-    serializer_class = PerformancesSerializer
 
 

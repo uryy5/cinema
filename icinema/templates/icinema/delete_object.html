@@ -1,0 +1,15 @@
+{% extends "icinema/base.html" %}
+
+{% block content %}
+
+<h1>Delete {{ object}}</h1>
+
+<p>Are you sure you want to delete the contact {{ object}}?</p>
+
+<form method="POST">
+  {% csrf_token %}
+  <input type="submit" value="Yes, delete." />
+  <input type="button" onclick="history.back()" value="No, cancel"/>
+</form>
+
+{% endblock %}

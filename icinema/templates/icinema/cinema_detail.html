@@ -23,7 +23,7 @@
         <li><a href="{% url 'icinema:films_detail' cinema.id films.id 'html' %}">
             {{ films.tittle }}</a>
          {% if user == cinema.user %}
-        (<a href="{% url "films-delete"  films.id  %}">Delete</a>)
+        (<a href="{% url "icinema:films-delete"  films.id  %}">Delete</a>)
         {% endif %}</li>
     {% empty %}<li>Sorry, no films for this cinema yet.</li>
     {% endfor %}
