@@ -14,9 +14,13 @@ from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
 from django.views.generic.base import TemplateResponseMixin
 from django.utils.decorators import method_decorator
+from rest_framework import generics, permissions
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from rest_framework.reverse import reverse
 
 from forms import *
-
+from serializers import CinemaSerializer, FilmsSerializer, PerformancesSerializer
 
 
 class ConnegResponseMixin(TemplateResponseMixin):
@@ -150,5 +154,51 @@ class LoginRequiredCheckIsOwnerDeleteView(LoginRequiredMixin, CheckIsOwnerMixin,
     template_name = 'icinema/delete_object.html'
     success_url = "/icinema"
 
+### RESTful API views ###
+
+class IsOwnerOrReadOnly(permissions.BasePermission):
+
+    def has_object_permission(self, request, view, obj):
+        # Read permissions are allowed to any request,
+        # so we'll always allow GET, HEAD or OPTIONS requests.
+        if request.method in permissions.SAFE_METHODS:
+            return True
+        # Instance must have an attribute named `owner`.
+        return obj.user == request.user
+
+class APICinemaList(generics.ListCreateAPIView):
+    permission_classes = (IsOwnerOrReadOnly,)
+    model = Cinema
+    queryset = Cinema.objects.all()
+    serializer_class = CinemaSerializer
+
+class APICinemaDetail(generics.RetrieveUpdateDestroyAPIView):
+    permission_classes = (IsOwnerOrReadOnly,)
+    model = Cinema
+    queryset = Cinema.objects.all()
+    serializer_class = CinemaSerializer
+
+class APIFilmsList(generics.ListCreateAPIView):
+    permission_classes = (IsOwnerOrReadOnly,)
+    model = Films
+    queryset = Films.objects.all()
+    serializer_class = FilmsSerializer
+
+class APIFilmsDetail(generics.RetrieveUpdateDestroyAPIView):
+    permission_classes = (IsOwnerOrReadOnly,)
+    model = Films
+    queryset = Films.objects.all()
+    serializer_class = FilmsSerializer
+
+class APIPerformanceList(generics.ListCreateAPIView):
+    permission_classes = (IsOwnerOrReadOnly,)
+    model = FilmsPerfomances
+    queryset = FilmsPerfomances.objects.all()
+    serializer_class = PerformancesSerializer
+
+class APIPerformanceDetail(generics.RetrieveUpdateDestroyAPIView):
+    permission_classes = (IsOwnerOrReadOnly,)
+    model = FilmsPerfomances
+    serializer_class = PerformancesSerializer
 
 
