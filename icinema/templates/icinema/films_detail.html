@@ -11,7 +11,7 @@
 
 <p>Pelicula realitzada per:  <a href="{% url 'icinema:cinema_detail' films.cinema.id 'html' %}">{{ films.cinema.name }}</a></p>
 <p>
-    Genere: {{ films.genre_classification }} <br/>
+    Genere: {{ films.genere_classification }} <br/>
     Classificacio: {{ films.rating }} <br/>
     Edat recomendada: {{ films.advisory_age }} <br/>
     Sipnosis:{{ films.sipnosis }} <br/>
