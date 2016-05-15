@@ -1,4 +1,4 @@
-from django.conf.urls import patterns, url
+from django.conf.urls import patterns, url,include
 from django.core.urlresolvers import reverse_lazy
 from django.views.generic import UpdateView
 from django.views.generic.base import RedirectView
@@ -7,7 +7,7 @@ from models import *
 from forms import *
 from views import *
 
-urlpatterns = patterns('',
+urlpatterns = [
     # Home page
     url(r'^$',
         RedirectView.as_view(url=reverse_lazy('icinema:cinema_list', kwargs={'extension': 'html'})),
@@ -78,22 +78,29 @@ urlpatterns = patterns('',
     # Create Performances (Hours, Sala )
     url(r'^performances/(?P<pkr>\d+)/films/(?P<pk>\d+)/add_performance$', PerformanceCreate.as_view(), name='performance_create'),
 
-   # Delete Performance,
-   url(r'^performances/(?P<pk>\d+)/delete_performance/$', LoginRequiredCheckIsOwnerDeleteView.as_view(model=FilmsPerfomances),
+    # Delete Performance,
+    url(r'^performances/(?P<pk>\d+)/delete_performance/$', LoginRequiredCheckIsOwnerDeleteView.as_view(model=FilmsPerfomances),
        name='performance-delete'),
 
-   # Edit performances details
-   url(r'^performances/(?P<pk>\d+)/edit/$', LoginRequiredCheckIsOwnerUpdateView.as_view(model=FilmsPerfomances,
+    # Edit performances details
+    url(r'^performances/(?P<pk>\d+)/edit/$', LoginRequiredCheckIsOwnerUpdateView.as_view(model=FilmsPerfomances,
                                                                                    form_class=PerformancesEditForm),
        name='performances_edit'),
-   # Cinemes performances list
-   url(r'^performances\.(?P<extension>(json|xml))$', PerformancesList.as_view(), name='performances_list'),
+    # Cinemes performances list
+    url(r'^performances\.(?P<extension>(json|xml))$', PerformancesList.as_view(), name='performances_list'),
 
-   # Cinemes performances detail
-   url(r'^performances/(?P<pk>\d+)\.(?P<extension>(json|xml|html))$',
+    # Cinemes performances detail
+    url(r'^performances/(?P<pk>\d+)\.(?P<extension>(json|xml|html))$',
        PerformancesDetail.as_view(), name='performances_detail'),
 
 
 
-
-)
+    #RESTful API
+    url(r'^api/auth/', include('rest_framework.urls', namespace='rest_framework')),
+    url(r'^api/cinemes/$', APICinemaList.as_view(), name='cinema-list'),
+    url(r'^api/cinemes/(?P<pk>\d+)/$', APICinemaDetail.as_view(), name='cinema-detail'),
+    url(r'^api/films/$', login_required(APIFilmsList.as_view()), name='films-list'),
+    url(r'^api/films/(?P<pk>\d+)/$', APIFilmsDetail.as_view(), name='films-detail'),
+    url(r'^api/performances/$', APIPerformanceList.as_view(), name='performances-list'),
+    url(r'^api/performances/(?P<pk>\d+)/$', APIPerformanceDetail.as_view(), name='performances-detail'),
+]
