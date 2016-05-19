@@ -12,19 +12,19 @@ Class-based views
 Including another URLconf
     1. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
 """
-from django.conf.urls import patterns, include, url
+
 
 from django.contrib import admin
 from django.conf.urls import patterns, include, url
 
 from django.contrib import admin
 admin.autodiscover()
+from django.conf import settings
+from django.views.static import serve
 
 from icinema.views import *
 urlpatterns = patterns('',
-    # Examples:
-    # url(r'^$', 'sobres.views.home', name='home'),
-    # url(r'^blog/', include('blog.urls')),
+
 
     url(r'^user/(\w+)/$', userpage),
     url(r'^$', mainpage, name='home'),
@@ -34,3 +34,7 @@ urlpatterns = patterns('',
     url(r'^admin/', include(admin.site.urls)),
 
 )
+if settings.DEBUG:
+    urlpatterns += [
+        url(r'^media/(?P<path>.*)$', serve, {'document_root': settings.MEDIA_ROOT, })
+    ]
