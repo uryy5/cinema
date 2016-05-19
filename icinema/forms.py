@@ -4,7 +4,7 @@ from models import *
 class CinemaForm(ModelForm):
     class Meta:
         model = Cinema
-        exclude = ('user','date',)
+        exclude = ('user','date')
 
 class FilmEditForm(ModelForm):
     class Meta:
@@ -25,3 +25,8 @@ class PerformancesEditForm(ModelForm):
     class Meta:
         model = FilmsPerfomances
         exclude = ('user','films','cinema')
+
+class ReviewEditForm(ModelForm):
+    class Meta:
+        model = Review
+        exclude = ('user','date')

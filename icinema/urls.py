@@ -11,7 +11,7 @@ urlpatterns = [
     # Home page
     url(r'^$',
         RedirectView.as_view(url=reverse_lazy('icinema:cinema_list', kwargs={'extension': 'html'})),
-        name='home_page'),
+      name='home_page'),
 
     #CINEMA
 
@@ -42,6 +42,26 @@ urlpatterns = [
     url(r'^cinemes/(?P<pk>\d+)/delete_cinema/$',
        LoginRequiredCheckIsOwnerDeleteView.as_view(model=Cinema),
        name='cinema-delete'),
+
+    # Create a cinema review using function
+    url(r'^cinemes/(?P<pk>\d+)/reviews/create/$',
+        review,
+        name='review_create'),
+
+    # Edit a Cinema review using function.
+
+    url(r'^cinemes/(?P<pkr>\d+)/reviews/(?P<pk>\d+)/edit/$',
+        LoginRequiredCheckIsOwnerUpdateView.as_view(model=CinemaReview,
+                                                    form_class=ReviewEditForm),
+        name='review_edit'),
+
+    # Delete Cinema review using function.
+
+    url(r'^cinemes/(?P<pkr>\d+)/reviews/(?P<pk>\d+)/delete/$',
+        LoginRequiredCheckIsOwnerDeleteView.as_view(model=CinemaReview,
+                                                    template_name='icinema/delete_object.html',
+                                                    success_url="/icinema/cinemes.html", ),
+        name='review_delete'),
 
     #FILMS
 
@@ -103,4 +123,6 @@ urlpatterns = [
     url(r'^api/films/(?P<pk>\d+)/$', APIFilmsDetail.as_view(), name='films-detail'),
     url(r'^api/performances/$', APIPerformanceList.as_view(), name='performances-list'),
     url(r'^api/performances/(?P<pk>\d+)/$', APIPerformanceDetail.as_view(), name='performances-detail'),
+    url(r'^api/cinemareviews/$', APICinemaReviewList.as_view(), name='cinemareview-list'),
+    url(r'^api/cinemareviews/(?P<pk>\d+)/$', APICinemaReviewDetail.as_view(),name='cinemareview-detail'),
 ]

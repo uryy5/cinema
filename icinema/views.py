@@ -18,10 +18,28 @@ from rest_framework import generics, permissions
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
-
+from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from forms import *
-from serializers import CinemaSerializer, FilmsSerializer, PerformancesSerializer
+from serializers import CinemaSerializer, FilmsSerializer, PerformancesSerializer,CinemaReviewSerializer
 
+class LoginRequiredMixin(object):
+    @method_decorator(login_required())
+    def dispatch(self, *args, **kwargs):
+        return super(LoginRequiredMixin, self).dispatch(*args, **kwargs)
+
+class CheckIsOwnerMixin(object):
+    def get_object(self, *args, **kwargs):
+        obj = super(CheckIsOwnerMixin, self).get_object(*args, **kwargs)
+        if not obj.user == self.request.user:
+            raise PermissionDenied
+        return obj
+
+class LoginRequiredCheckIsOwnerUpdateView(LoginRequiredMixin, CheckIsOwnerMixin, UpdateView):
+    template_name = 'icinema/form.html'
+
+class LoginRequiredCheckIsOwnerDeleteView(LoginRequiredMixin, CheckIsOwnerMixin, DeleteView):
+    template_name = 'icinema/delete_object.html'
+    success_url = "/icinema"
 
 class ConnegResponseMixin(TemplateResponseMixin):
 
@@ -83,6 +101,13 @@ class CinemaDetail(DetailView, ConnegResponseMixin):
     queryset = Cinema.objects.all()
     template_name = 'icinema/cinema_detail.html'
 
+    def get_context_data(self, **kwargs):
+        context = super(CinemaDetail, self).get_context_data(**kwargs)
+        context['RATING_CHOICES'] = Review.RATING_CHOICES
+        return context
+
+
+
 class FilmsList(ListView, ConnegResponseMixin):
     model = Films
     queryset = Films.objects.all()
@@ -104,7 +129,8 @@ class PerformancesDetail(DetailView, ConnegResponseMixin):
 
 
 
-class CinemaCreate(CreateView):
+
+class CinemaCreate(LoginRequiredMixin,CreateView):
     model = Cinema
     template_name = 'icinema/form.html'
     form_class = CinemaForm
@@ -113,7 +139,7 @@ class CinemaCreate(CreateView):
         form.instance.user = self.request.user
         return super(CinemaCreate, self).form_valid(form)
 
-class FilmCreate(CreateView):
+class FilmCreate(LoginRequiredMixin,CreateView):
     model = Films
     template_name = 'icinema/form.html'
     form_class = FilmCreateForm
@@ -123,7 +149,7 @@ class FilmCreate(CreateView):
         form.instance.cinema = Cinema.objects.get(id=self.kwargs['pkr'])
         return super(FilmCreate, self).form_valid(form)
 
-class PerformanceCreate(CreateView):
+class PerformanceCreate(LoginRequiredMixin,CreateView):
     model = FilmsPerfomances
     template_name = 'icinema/form.html'
     form_class = PerformancesCreateForm
@@ -133,26 +159,28 @@ class PerformanceCreate(CreateView):
         form.instance.films = Films.objects.get(id=self.kwargs['pk'])
         return super(PerformanceCreate, self).form_valid(form)
 
-
-
-class LoginRequiredMixin(object):
-    @method_decorator(login_required())
-    def dispatch(self, *args, **kwargs):
-        return super(LoginRequiredMixin, self).dispatch(*args, **kwargs)
-
-class CheckIsOwnerMixin(object):
-    def get_object(self, *args, **kwargs):
-        obj = super(CheckIsOwnerMixin, self).get_object(*args, **kwargs)
-        if not obj.user == self.request.user:
-            raise PermissionDenied
-        return obj
-
-class LoginRequiredCheckIsOwnerUpdateView(LoginRequiredMixin, CheckIsOwnerMixin, UpdateView):
+class ReviewCreate(LoginRequiredMixin, CreateView):
+    model = CinemaReview
     template_name = 'icinema/form.html'
+    form_class = CinemaForm
 
-class LoginRequiredCheckIsOwnerDeleteView(LoginRequiredMixin, CheckIsOwnerMixin, DeleteView):
-    template_name = 'icinema/delete_object.html'
-    success_url = "/icinema"
+    def form_valid(self, form):
+        form.instance.user = self.request.user
+        return super(ReviewCreate, self).form_valid(form)
+
+@login_required()
+def review(request, pk):
+    cinema = get_object_or_404(Cinema, pk=pk)
+    review = CinemaReview(
+        rating=request.POST['rating'],
+        comment=request.POST['comment'],
+        user=request.user,
+        cinema=cinema)
+    review.save()
+    return HttpResponseRedirect(reverse('icinema:cinema_detail', args=(cinema.id,)))
+
+
+
 
 ### RESTful API views ###
 
@@ -199,6 +227,19 @@ class APIPerformanceList(generics.ListCreateAPIView):
 class APIPerformanceDetail(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = (IsOwnerOrReadOnly,)
     model = FilmsPerfomances
+    queryset = FilmsPerfomances.objects.all()
     serializer_class = PerformancesSerializer
+
+class APICinemaReviewList(generics.ListCreateAPIView):
+    permission_classes = (IsAuthenticatedOrReadOnly,)
+    model = CinemaReview
+    queryset = CinemaReview.objects.all()
+    serializer_class = CinemaReviewSerializer
+
+class APICinemaReviewDetail(generics.RetrieveUpdateDestroyAPIView):
+    permission_classes = (IsOwnerOrReadOnly,)
+    model = CinemaReview
+    queryset = CinemaReview.objects.all()
+    serializer_class = CinemaReviewSerializer
 
 
