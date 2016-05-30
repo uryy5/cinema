@@ -24,6 +24,12 @@ class Cinema (models.Model):
     def get_absolute_url(self):
         return reverse('icinema:cinema_detail', kwargs={'pk': self.pk})
 
+    def averageRating(self):
+        ratingSum = sum([float(review.rating) for review in self.cinemareview_set.all()])
+        reviewCount = self.cinemareview_set.count()
+
+        return ratingSum / reviewCount
+
 class Films (models.Model):
     tittle=models.TextField(blank=True,null=True)
     genere_classification=models.TextField(blank=True,null=True)
@@ -75,3 +81,4 @@ class CinemaReview(Review):
 
     def get_absolute_url(self):
         return '/icinema/cinemes/' + str(self.cinema.id) + '.html'
+

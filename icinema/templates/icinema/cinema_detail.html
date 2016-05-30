@@ -1,9 +1,10 @@
 {% extends "icinema/base.html" %}
-
+{% block title %}Cinema - {{ cinema.name }}{% endblock %}
 {% block content %}
 <body>
+    <span vocab="http://schema.org/" typeof="MovieTheater">
 <h1>
-    {{ cinema.name }}
+    <span property="name">{{ cinema.name }}</span>
     {% if user == cinema.user %}
         (<a href="{% url 'icinema:cinema_edit' cinema.id %}">edit</a>)
     {% endif %}
@@ -13,12 +14,20 @@
     {% endif %}
 <h2>Address:</h2>
 <p>
+<span  property="address"  typeof="PostalAddress">
+    Adress: <span property="streetAddress">{{ cinema.address }}</span> <br/>
+    City:    <span property="addressLocality"> {{ cinema.city }}</span> <br/>
+    PostCode: <span property="postalCode"> {{ cinema.postcode }}</span> <br/>
+    State or Province: <span property="addressRegion">{{ cinema.stateOrProvince }}</span><br/>
 
-    {{ cinema.address }}, {{ cinema.city }} <br/>
-    {{ cinema.postcode }} {{ cinema.cinema_url }} <br/>
-    {{ cinema.telephone }} ({{ cinema.stateOrProvince }})
+<span vocab="http://schema.org/" typeof="ContactPoint">
+    Telephone: <span property="telephone" >{{ cinema.telephone  }}</span><br/>
 
-</p>
+
+<span vocab="http://schema.org/" typeof="Thing">
+    URL: <span property="url" >{{ cinema.cinema_url  }}</span>
+
+
    <p>
 
     &nbsp
@@ -45,21 +54,41 @@
     {% endfor %}
 </ul>
 <h2>Reviews</h2>
-<ul>
+{% if cinema.cinemareview_set.all|length > 0 %}
+<span rel="aggregateRating">
+    <p typeof="AggregateRating">
+        Average rating <span property="ratingValue">{{ cinema.averageRating|stringformat:".1f" }}</span>
+        {% with cinema.cinemaeview_set.all|length as reviewCount %}
+        from <span property="reviewCount">{{ reviewCount }}
+        </span> review{{ reviewCount|pluralize }}
+        {% endwith %}
+    </p>
+</span>
+<ul rel="review">
     {% for review in cinema.cinemareview_set.all %}
-        <li>
         {% if user == review.user %}
-          <a href="{{ cinema.id }}/reviews/{{  review.id }}/edit/">Edit</a>
+             <a href="{{ cinema.id }}/reviews/{{  review.id }}/edit/">Edit</a>
         {% endif %}
-            {% if user == review.user %}
-            <a href="{{ cinema.id }}/reviews/{{  review.id }}/delete/">Delete</a></p>
-            {% endif %}
-            <p>{{ review.rating }} star{{ review.rating|pluralize }}</p>
-            <p>{{ review.comment }}</p>
-            <p>Created by {{ review.user }} on {{ review.date }}</p>
+        {% if user == review.user %}
+             <a href="{{ cinema.id }}/reviews/{{  review.id }}/delete/">Delete</a></p>
+        {% endif %}
+        <li typeof="Review">
+            <p rel="reviewRating" typeof="Rating">
+                <span property="worstRating" content="{{ RATING_CHOICES.0.0 }}"></span>
+                <span property="ratingValue">{{ review.rating }}</span>
+                star{{ review.rating|pluralize }}
+                {% with RATING_CHOICES|last as best %}
+                <span property="bestRating" content="{{ best.0 }}"></span>
+                {% endwith %}
+            </p>
+            <p property="description">{{ review.comment }}</p>
+            <p>Created by <span property="author">{{ review.user }}</span> on
+                <span property="datePublished" content="{{ review.date|date:'Y-m-d' }}">{{ review.date }}</span></p>
         </li>
     {% endfor %}
 </ul>
+</span>
+{% endif %}
 
 <h3>Add Review</h3>
 <form action="{% url 'icinema:review_create' cinema.id %}" method="post">
