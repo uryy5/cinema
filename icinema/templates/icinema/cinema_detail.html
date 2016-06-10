@@ -19,13 +19,9 @@
     City:    <span property="addressLocality"> {{ cinema.city }}</span> <br/>
     PostCode: <span property="postalCode"> {{ cinema.postcode }}</span> <br/>
     State or Province: <span property="addressRegion">{{ cinema.stateOrProvince }}</span><br/>
-
-<span vocab="http://schema.org/" typeof="ContactPoint">
     Telephone: <span property="telephone" >{{ cinema.telephone  }}</span><br/>
-
-
-<span vocab="http://schema.org/" typeof="Thing">
     URL: <span property="url" >{{ cinema.cinema_url  }}</span>
+
 
 
    <p>
@@ -58,9 +54,8 @@
 <span rel="aggregateRating">
     <p typeof="AggregateRating">
         Average rating <span property="ratingValue">{{ cinema.averageRating|stringformat:".1f" }}</span>
-        {% with cinema.cinemaeview_set.all|length as reviewCount %}
-        from <span property="reviewCount">{{ reviewCount }}
-        </span> review{{ reviewCount|pluralize }}
+        {% with cinema.cinemareview_set.all|length as reviewCount %}
+        from <span property="reviewCount">{{ reviewCount }}</span> review{{ reviewCount|pluralize }}
         {% endwith %}
     </p>
 </span>

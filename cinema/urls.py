@@ -32,6 +32,7 @@ urlpatterns = patterns('',
     url(r'^icinema/', include('icinema.urls', namespace='icinema')),
     url(r'^logout/$', 'django.contrib.auth.views.logout', name='logout', kwargs={'next_page': '/'}),
     url(r'^admin/', include(admin.site.urls)),
+    url(r'^api/auth/', include('rest_framework.urls', namespace='rest_framework')),
 
 )
 if settings.DEBUG:

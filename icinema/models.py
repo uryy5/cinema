@@ -21,8 +21,10 @@ class Cinema (models.Model):
 
     def __unicode__(self):
         return u"%s" % self.name
+
     def get_absolute_url(self):
         return reverse('icinema:cinema_detail', kwargs={'pk': self.pk})
+
 
     def averageRating(self):
         ratingSum = sum([float(review.rating) for review in self.cinemareview_set.all()])
